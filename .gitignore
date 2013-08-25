@@ -1,0 +1,5 @@
+twitter.cfg
+*.db
+*.hi
+*.o
+dist/*
