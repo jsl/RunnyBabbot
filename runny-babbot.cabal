@@ -65,3 +65,6 @@ executable runny-babbot
                      , bytestring == 0.10.*
                      , HDBC == 2.3.*
                      , HDBC-sqlite3 == 2.3.*
+
+ if impl(ghc < 7.6)
+   build-depends: ghc-prim
