@@ -18,8 +18,7 @@ registerTweet conn tweet = do
   return ()
 
 newTweets :: IConnection conn => conn -> [Tweet] -> IO ([Tweet])
-newTweets conn tweets = filterM (isUnprocessed conn)
-                        tweets
+newTweets conn = filterM (isUnprocessed conn)
 
 isUnprocessed :: IConnection conn => conn -> Tweet -> IO (Bool)
 isUnprocessed conn tweet = do

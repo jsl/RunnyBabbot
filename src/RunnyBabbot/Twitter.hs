@@ -67,9 +67,7 @@ processTweetResponse conn creds newTweet = do
 
 processNewTweets :: IConnection conn => conn -> OauthCredentials -> [Tweet] ->
                     IO ()
-processNewTweets conn creds newTweets = mapM_
-                                        (processTweetResponse conn creds)
-                                        newTweets
+processNewTweets conn creds = mapM_ (processTweetResponse conn creds)
 
 tweetResponseFor :: Tweet -> IO (TweetResponse)
 tweetResponseFor Tweet { text = txt

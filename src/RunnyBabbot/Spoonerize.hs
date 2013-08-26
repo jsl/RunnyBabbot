@@ -90,8 +90,7 @@ isAllConsonants :: Word -> Bool
 isAllConsonants = all isConsonant
 
 applyCase :: Char -> Char -> Char
-applyCase sourceCharacter destCharacter =
-    (caseFunction sourceCharacter) destCharacter
+applyCase sourceCharacter = caseFunction sourceCharacter
 
 swapWordCase :: (Word, Word) -> (Word, Word)
 swapWordCase (wordA, wordB) =
