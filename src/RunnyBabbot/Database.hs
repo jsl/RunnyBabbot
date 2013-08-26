@@ -12,6 +12,7 @@ import RunnyBabbot.TwitterData (Tweet(..))
 registerTweet :: IConnection conn => conn -> Tweet -> IO ()
 registerTweet conn tweet = do
   let Tweet {RunnyBabbot.TwitterData.id = tweet_id} = tweet
+  putStrLn $ "Registering tweet id " ++ show tweet_id
   run conn "INSERT INTO tweets (id) VALUES (?)" [SqlInteger tweet_id]
   commit conn
   return ()

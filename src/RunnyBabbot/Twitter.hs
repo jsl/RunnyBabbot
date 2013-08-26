@@ -48,13 +48,22 @@ mentions creds = do
 
   return $ eitherDecode $ responseBody res
 
+processTweetResponse :: IConnection conn => conn -> OauthCredentials -> Tweet
+                     -> IO ()
+processTweetResponse conn creds newTweet = do
+  tweetResponse <- tweetResponseFor newTweet
+  putStrLn $ "Responding to Tweet: " ++ show newTweet ++
+           " with response: " ++ show tweetResponse
+
+  registerTweet conn newTweet
+  postTweetResponse creds tweetResponse
+
+
 processNewTweets :: IConnection conn => conn -> OauthCredentials -> [Tweet] ->
                     IO ()
-processNewTweets conn creds newTweets = do
-  putStrLn $ "Processing new Tweets: " ++ show newTweets
-  mapM_ (registerTweet conn) newTweets
-  mapM_ (\tweet -> ((postTweetResponse creds) .
-                    tweetResponseFor) tweet) newTweets
+processNewTweets conn creds newTweets = mapM_
+                                        (processTweetResponse conn creds)
+                                        newTweets
 
 tweetResponseFor :: Tweet -> IO (TweetResponse)
 tweetResponseFor Tweet { text = txt
@@ -72,10 +81,10 @@ replaceRunnyBabbotMention :: String -> String -> String
 replaceRunnyBabbotMention originalTweet newUsername =
     replace "@RunnyBabbot" ("@" ++ newUsername) originalTweet
 
-postTweetResponse :: OauthCredentials -> IO TweetResponse -> IO ()
+postTweetResponse :: OauthCredentials -> TweetResponse -> IO ()
 postTweetResponse creds spoonerizedTweetResponse = do
-  TweetResponse { status = st
-                , in_reply_to_status_id = inReplyTo } <-
+  let TweetResponse { status = st
+                    , in_reply_to_status_id = inReplyTo } =
                                                    spoonerizedTweetResponse
 
   req' <- parseUrl "https://api.twitter.com/1.1/statuses/update.json"
