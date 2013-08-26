@@ -67,4 +67,6 @@ main = do
           Left err -> hPutStrLn stderr $ "Unable to retrieve tweets: " ++ err
           Right ts -> do
                      unrespondedTweets <- newTweets dbconn ts
+                     putStrLn $ "We are going to respond to: " ++
+                              show unrespondedTweets
                      processNewTweets dbconn creds unrespondedTweets

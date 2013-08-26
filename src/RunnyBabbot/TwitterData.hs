@@ -11,7 +11,7 @@ import Data.Aeson
 import GHC.Generics
 import Data.Text (Text)
 
-data User = User { name :: !Text } deriving (Show, Generic)
+data User = User { screen_name :: !Text } deriving (Show, Generic)
 
 data Tweet = Tweet {
       text :: !Text

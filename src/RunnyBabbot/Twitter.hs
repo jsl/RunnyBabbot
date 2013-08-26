@@ -51,22 +51,22 @@ mentions creds = do
 processNewTweets :: IConnection conn => conn -> OauthCredentials -> [Tweet] ->
                     IO ()
 processNewTweets conn creds newTweets = do
-  putStrLn $ "Processing: " ++ show newTweets
+  putStrLn $ "Processing new Tweets: " ++ show newTweets
   mapM_ (registerTweet conn) newTweets
   mapM_ (\tweet -> ((postTweetResponse creds) .
                     tweetResponseFor) tweet) newTweets
 
 tweetResponseFor :: Tweet -> IO (TweetResponse)
 tweetResponseFor Tweet { text = txt
-                       , RunnyBabbot.TwitterData.id   = orig_id
-                       , user = User { name = user_name } } = do
+                       , RunnyBabbot.TwitterData.id = originalTweetId
+                       , user = User { screen_name = userName } } = do
 
   spoonerizedText <- spoonerize $ unpack txt
   let textWithUserMention = replaceRunnyBabbotMention spoonerizedText
-                            (unpack user_name)
+                            (unpack userName)
 
   return $ TweetResponse { status = textWithUserMention
-                         , in_reply_to_status_id = orig_id }
+                         , in_reply_to_status_id = originalTweetId }
 
 replaceRunnyBabbotMention :: String -> String -> String
 replaceRunnyBabbotMention originalTweet newUsername =
@@ -86,6 +86,8 @@ postTweetResponse creds spoonerizedTweetResponse = do
 
   let oauth = myoauth creds
   let cred  = mycred creds
+
+  putStrLn $ "Posting tweet response: " ++ show req
 
   res <- withManager $ \m -> do
     signedreq <- signOAuth oauth cred req
