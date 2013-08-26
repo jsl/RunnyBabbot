@@ -4,7 +4,7 @@ The first bunny rabbit hit in Wraskell.
 
 ## Background
 
-RunnyBabbot is a [Twitter bot](http://twitter.com/RunnyBabbot] inspired by
+RunnyBabbot is a [Twitter bot](http://twitter.com/RunnyBabbot) inspired by
 [Shel Silverstein's book](http://en.wikipedia.org/wiki/Runny_Babbit).
 
 When you mention @RunnyBabbot in a Tweet, he will respond back, converting
