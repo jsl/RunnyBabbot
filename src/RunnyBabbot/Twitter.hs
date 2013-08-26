@@ -55,6 +55,9 @@ processTweetResponse conn creds newTweet = do
   putStrLn $ "Responding to Tweet: " ++ show newTweet ++
            " with response: " ++ show tweetResponse
 
+  -- Register Tweet in the database first so that we don't spam this person
+  -- if the Tweet posting fails. For example, the Tweet post could be too
+  -- long. We don't want to continue trying in that case.
   registerTweet conn newTweet
   postTweetResponse creds tweetResponse
 
