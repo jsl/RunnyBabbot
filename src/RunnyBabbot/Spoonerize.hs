@@ -61,15 +61,14 @@ isTooShort word = length word <= 1
 hasLeadingVowel :: Word -> Bool
 hasLeadingVowel word = not (null word) && head word `elem` vowels
 
-isRunnyBabbotMention :: Word -> Bool
-isRunnyBabbotMention word = (map toLower word) =~
-                            "@runnybabbot[[:punct:]]*" :: Bool
+isMention :: Word -> Bool
+isMention word = word =~ "@[[:alpha:]]+[[:punct:]]*" :: Bool
 
 isSpoonerizableWord :: Word -> Bool
 isSpoonerizableWord word = not (isTooShort word) &&
                            not (hasLeadingVowel word) &&
                            not (isAllConsonants word) &&
-                           not (isRunnyBabbotMention word)
+                           not (isMention word)
 
 markSpoonerizableWords :: AnnotatedSentence -> AnnotatedSentence
 markSpoonerizableWords =
