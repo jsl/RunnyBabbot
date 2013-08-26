@@ -52,12 +52,6 @@ annotatedSentence sent =
     where sentence   = words sent
           wordTuples = zip3 [1..] sentence $ cycle [True]
 
-caseFunction :: Char -> Char -> Char
-caseFunction char = if isLower char then
-                        toLower
-                    else
-                        toUpper
-
 isTooShort :: Word -> Bool
 isTooShort word = length word <= 1
 
@@ -92,8 +86,11 @@ isConsonant l = l `notElem` vowels
 isAllConsonants :: Word -> Bool
 isAllConsonants = all isConsonant
 
-applyCase :: Char -> Char -> Char
-applyCase sourceCharacter = caseFunction sourceCharacter
+caseFunction :: Char -> Char -> Char
+caseFunction char = if isLower char then
+                        toLower
+                    else
+                        toUpper
 
 swapWordCase :: (Word, Word) -> (Word, Word)
 swapWordCase (wordA, wordB) =
@@ -101,8 +98,8 @@ swapWordCase (wordA, wordB) =
      [newLtrB] ++ tail wordB)
     where firstLtrA = head wordA
           firstLtrB = head wordB
-          newLtrA   = applyCase firstLtrB firstLtrA
-          newLtrB   = applyCase firstLtrA firstLtrB
+          newLtrA   = caseFunction firstLtrB firstLtrA
+          newLtrB   = caseFunction firstLtrA firstLtrB
 
 swapWordBeginnings :: (Word, Word) -> (Word, Word)
 swapWordBeginnings (wordA, wordB) =
