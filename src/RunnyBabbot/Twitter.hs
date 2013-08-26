@@ -13,9 +13,12 @@ import RunnyBabbot.Configuration (OauthCredentials(..), credentials)
 import RunnyBabbot.Database (registerTweet)
 import RunnyBabbot.TwitterData (User(..), Tweet(..), TweetResponse(..))
 
-import Database.HDBC
-import Network.HTTP.Conduit
-import Web.Authenticate.OAuth
+import Database.HDBC (IConnection)
+import Network.HTTP.Conduit (withManager, httpLbs, parseUrl, urlEncodedBody,
+                             responseBody)
+import Web.Authenticate.OAuth ( OAuth, Credential, newCredential, newOAuth
+                              , signOAuth, oauthConsumerKey, oauthConsumerSecret
+                              , oauthServerName)
 import Data.Text (Text, pack, unpack)
 import Data.Aeson (eitherDecode)
 import Data.List.Utils (replace)
