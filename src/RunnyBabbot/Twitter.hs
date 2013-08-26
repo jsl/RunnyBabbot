@@ -69,7 +69,7 @@ processNewTweets :: IConnection conn => conn -> OauthCredentials -> [Tweet] ->
                     IO ()
 processNewTweets conn creds = mapM_ (processTweetResponse conn creds)
 
-tweetResponseFor :: Tweet -> IO (TweetResponse)
+tweetResponseFor :: Tweet -> IO TweetResponse
 tweetResponseFor Tweet { text = txt
                        , RunnyBabbot.TwitterData.id = originalTweetId
                        , user = User { screen_name = userName } } = do

@@ -17,10 +17,10 @@ registerTweet conn tweet = do
   commit conn
   return ()
 
-newTweets :: IConnection conn => conn -> [Tweet] -> IO ([Tweet])
+newTweets :: IConnection conn => conn -> [Tweet] -> IO [Tweet]
 newTweets conn = filterM (isUnprocessed conn)
 
-isUnprocessed :: IConnection conn => conn -> Tweet -> IO (Bool)
+isUnprocessed :: IConnection conn => conn -> Tweet -> IO Bool
 isUnprocessed conn tweet = do
   let Tweet {RunnyBabbot.TwitterData.id = tweet_id} = tweet
   ret <- quickQuery conn "SELECT * FROM tweets WHERE id = ? LIMIT 1"
