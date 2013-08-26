@@ -82,7 +82,7 @@ tweetResponseFor Tweet { text = txt
 
 replaceRunnyBabbotMention :: String -> String -> String
 replaceRunnyBabbotMention originalTweet newUsername =
-    replace "@RunnyBabbot" ("@" ++ newUsername) originalTweet
+    replace "@RunnyBabbot" ('@' : newUsername) originalTweet
 
 postTweetResponse :: OauthCredentials -> TweetResponse -> IO ()
 postTweetResponse creds spoonerizedTweetResponse = do

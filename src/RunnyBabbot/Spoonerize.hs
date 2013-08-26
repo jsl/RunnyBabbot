@@ -94,8 +94,8 @@ caseFunction char = if isLower char then
 
 swapWordCase :: (Word, Word) -> (Word, Word)
 swapWordCase (wordA, wordB) =
-    ([newLtrA] ++ tail wordA,
-     [newLtrB] ++ tail wordB)
+    (newLtrA : tail wordA,
+     newLtrB : tail wordB)
     where firstLtrA = head wordA
           firstLtrB = head wordB
           newLtrA   = caseFunction firstLtrB firstLtrA
