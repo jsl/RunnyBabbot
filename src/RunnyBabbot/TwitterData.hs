@@ -13,8 +13,8 @@ import Data.Text (Text)
 
 data User = User { screen_name :: !Text } deriving (Show, Generic)
 
-data Tweet = Tweet {
-      text :: !Text
+data Tweet = Tweet
+    { text :: !Text
     , id   :: Integer
     , user :: User
     } deriving (Show, Generic)

@@ -1,6 +1,6 @@
 module RunnyBabbot.Database
-    (registerTweet
-    ,newTweets)
+    ( registerTweet
+    , newTweets)
 where
 
 import Database.HDBC

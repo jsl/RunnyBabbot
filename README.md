@@ -26,6 +26,9 @@ This leaves you with a binary that should be in the directory:
 
     dist/build/runny-babbot/runny-babbot
 
+You can also run `cabal install` after the above steps and a binary will
+be put in your `~/.cabal/bin` directory.
+
 ## Usage
 
 An instance of this software is running on a virtual server somewhere.
