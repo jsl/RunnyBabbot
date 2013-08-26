@@ -1,4 +1,7 @@
-module RunnyBabbot.Spoonerize (spoonerize, markedSentence, WordInfo(..)) where
+module RunnyBabbot.Spoonerize ( spoonerize
+                              , markedSentence
+                              , WordInfo(..)
+                              ) where
 
 import System.Random
 import Data.Array.IO
@@ -49,7 +52,7 @@ annotatedSentence sent =
     where sentence   = words sent
           wordTuples = zip3 [1..] sentence $ cycle [True]
 
-caseFunction :: Char -> (Char -> Char)
+caseFunction :: Char -> Char -> Char
 caseFunction char = if isLower char then
                         toLower
                     else
