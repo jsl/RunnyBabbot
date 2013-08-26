@@ -3,3 +3,4 @@ twitter.cfg
 *.hi
 *.o
 dist/*
+report.html
