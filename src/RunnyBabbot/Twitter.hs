@@ -42,8 +42,7 @@ mentions creds = do
   let oauth = myoauth creds
   let cred  = mycred creds
 
-  req <-
-      parseUrl $ "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
+  req <- parseUrl "https://api.twitter.com/1.1/statuses/mentions_timeline.json"
 
   res <- withManager $ \m -> do
            signedreq <- signOAuth oauth cred req
@@ -78,8 +77,8 @@ tweetResponseFor Tweet { text = txt
   let textWithUserMention = replaceRunnyBabbotMention spoonerizedText
                             (unpack userName)
 
-  return $ TweetResponse { status = textWithUserMention
-                         , in_reply_to_status_id = originalTweetId }
+  return TweetResponse { status = textWithUserMention
+                       , in_reply_to_status_id = originalTweetId }
 
 replaceRunnyBabbotMention :: String -> String -> String
 replaceRunnyBabbotMention originalTweet newUsername =
