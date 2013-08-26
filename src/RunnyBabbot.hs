@@ -17,7 +17,6 @@ import Data.Text (pack, unpack)
 import Database.HDBC.Sqlite3 (connectSqlite3)
 import Database.HDBC
 
-import System.Environment ( getArgs )
 import System.Console.GetOpt
 import Data.Maybe ( fromMaybe )
 
