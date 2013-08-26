@@ -15,19 +15,17 @@ data OauthCredentials = OauthCredentials {
     } deriving (Show)
 
 credentials :: String -> IO (Either CPError OauthCredentials)
-credentials filepath = do MTL.runErrorT $
-                             do
-                               cp <- join $ liftIO $ readfile emptyCP filepath
-                               consumerKey       <- get cp "oauth"
-                                                    "consumer_key"
-                               consumerSecret    <- get cp "oauth"
-                                                    "consumer_secret"
-                               accessToken       <- get cp "oauth"
-                                                    "access_token"
-                               accessTokenSecret <- get cp "oauth"
-                                                    "access_token_secret"
+credentials filepath = MTL.runErrorT $
+                       do
+                         cp <- join $ liftIO $ readfile emptyCP filepath
+                         consumerKey       <- get cp "oauth" "consumer_key"
+                         consumerSecret    <- get cp "oauth" "consumer_secret"
+                         accessToken       <- get cp "oauth" "access_token"
 
-                               return (OauthCredentials consumerKey
-                                                        consumerSecret
-                                                        accessToken
-                                                        accessTokenSecret)
+                         accessTokenSecret <- get cp "oauth"
+                                              "access_token_secret"
+
+                         return (OauthCredentials consumerKey
+                                                  consumerSecret
+                                                  accessToken
+                                                  accessTokenSecret)
