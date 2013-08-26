@@ -6,10 +6,12 @@ module RunnyBabbot.TwitterData
     , TweetResponse(..)
     ) where
 
-
 import Data.Aeson
 import GHC.Generics
 import Data.Text (Text)
+
+-- LHS in these records is not camelcase since it's the data format
+-- that Twitter gives us in JSON.
 
 data User = User { screen_name :: !Text } deriving (Show, Generic)
 

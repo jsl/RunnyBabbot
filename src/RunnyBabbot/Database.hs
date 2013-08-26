@@ -26,7 +26,7 @@ isUnprocessed conn tweet = do
   ret <- quickQuery conn "SELECT * FROM tweets WHERE id = ? LIMIT 1"
          [SqlInteger tweet_id]
 
-  return $ length ret == 0
+  return $ null ret
 
 migrate :: IConnection conn => conn -> IO ()
 migrate conn = do
