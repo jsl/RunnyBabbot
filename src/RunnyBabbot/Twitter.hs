@@ -48,12 +48,13 @@ mentions creds = do
 
   return $ eitherDecode $ responseBody res
 
-processNewTweets :: IConnection conn => conn -> OauthCredentials -> [Tweet] -> IO ()
+processNewTweets :: IConnection conn => conn -> OauthCredentials -> [Tweet] ->
+                    IO ()
 processNewTweets conn creds newTweets = do
   putStrLn $ "Processing: " ++ show newTweets
+  mapM_ (registerTweet conn) newTweets
   mapM_ (\tweet -> ((postTweetResponse creds) .
                     tweetResponseFor) tweet) newTweets
-  mapM_ (registerTweet conn) newTweets
 
 tweetResponseFor :: Tweet -> IO (TweetResponse)
 tweetResponseFor Tweet { text = txt
