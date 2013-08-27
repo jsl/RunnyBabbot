@@ -40,6 +40,12 @@ test5 = H.assertEqual
         [WordInfo 1 "Hi" True, WordInfo 2 "@jbrechtel" False]
         (markedSentence "Hi @jbrechtel")
 
+test6 = H.assertEqual
+        "Provides all possible spoonerizations"
+        ["Bey hunny rabbit", "Rey bunny habbit", "Hey runny babbit"]
+        (spoonerizations "Hey bunny rabbit")
+
 tests :: Test
 tests = testGroup "RunnyBabbot.Spoonerize.Tests" $
-        fromAssertions "annotations" [ test1, test2, test3, test4, test5 ]
+        fromAssertions "annotations" [ test1, test2, test3, test4, test5,
+                                       test6 ]

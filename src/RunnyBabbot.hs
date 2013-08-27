@@ -1,6 +1,6 @@
 module Main where
 
-import RunnyBabbot.Spoonerize (spoonerize, markedSentence)
+import RunnyBabbot.Spoonerize (spoonerize, spoonerizations)
 import RunnyBabbot.Configuration
 import RunnyBabbot.Twitter ( mentions
                            , postTweetResponse

@@ -1,12 +1,11 @@
 module RunnyBabbot.Spoonerize ( spoonerize
                               , markedSentence
+                              , spoonerizations
                               , WordInfo(..)
                               ) where
 
-import System.Random
-import Data.Array.IO
-import Control.Monad
-import Data.List (sort)
+import System.Random (randomRIO)
+import Data.List (sort, nubBy)
 import Data.Char (isLower, toLower, toUpper)
 import Text.Regex.Posix
 
@@ -28,23 +27,6 @@ type AnnotatedSentence = [WordInfo]
 
 alphabet   = ['A'..'Z'] ++ ['a'..'z']
 vowels     = "AEIOUaeiou"
-
--- | Randomly shuffle a list
---   /O(N)/
--- From http://www.haskell.org/haskellwiki/Random_shuffle#Imperative_algorithm
-shuffle :: [a] -> IO [a]
-shuffle xs = do
-        ar <- newArray n xs
-        forM [1..n] $ \i -> do
-            j <- randomRIO (i,n)
-            vi <- readArray ar i
-            vj <- readArray ar j
-            writeArray ar j vi
-            return vj
-  where
-    n = length xs
-    newArray :: Int -> [a] -> IO (IOArray Int a)
-    newArray n =  newListArray (1, n)
 
 annotatedSentence :: String -> AnnotatedSentence
 annotatedSentence sent =
@@ -112,10 +94,10 @@ spoonerizeWords (WordInfo seqA wordA boolA, WordInfo seqB wordB boolB) =
     (WordInfo seqA newWordA boolA, WordInfo seqB newWordB boolB)
     where (newWordA, newWordB) = swapWordBeginnings(wordA, wordB)
 
-wordSequenceNumbers :: [WordInfo] -> [Int]
+wordSequenceNumbers :: AnnotatedSentence -> [Int]
 wordSequenceNumbers = map (\(WordInfo sequenceNumber _ _) -> sequenceNumber)
 
-substituteWords :: ([WordInfo], WordInfo, WordInfo) -> String
+substituteWords :: (AnnotatedSentence, WordInfo, WordInfo) -> String
 substituteWords (oldsentence, toSpoonerizeA, toSpoonerizeB) =
     unwords $ map (\(WordInfo _ word _) -> word) orderedWords
     where
@@ -132,10 +114,37 @@ substituteWords (oldsentence, toSpoonerizeA, toSpoonerizeB) =
 markedSentence :: String -> AnnotatedSentence
 markedSentence sentence = markSpoonerizableWords $ annotatedSentence sentence
 
+symEq :: Eq a => (a,a) -> (a,a) -> Bool
+symEq (x, y) (u, v) = (x == u && y == v) || (x == v && y == u)
+
+removeDuplTuples :: Eq a => [(a,a)] -> [(a,a)]
+removeDuplTuples = nubBy symEq
+
+allpairs :: [Int] -> [(Int, Int)]
+allpairs xs = filter (\(x, y) -> not $ x == y) $
+              removeDuplTuples [(i, j) | i <- xs, j <- xs]
+
+spoonerizableWordSeqs :: AnnotatedSentence -> [(Int, Int)]
+spoonerizableWordSeqs sent = allpairs $ map (\(WordInfo seq _ _) -> seq) $
+                             filter (\(WordInfo seq _ isSpoonerizable) ->
+                                         isSpoonerizable) sent
+
+-- Returns all of the possible spoonerizations for the given String.
+spoonerizations :: String -> [String]
+spoonerizations sent = map
+                       (\(i, j) ->
+                            substituteWords
+                            (asent,
+                             (asent !! (i - 1)),
+                             (asent !! (j - 1))))
+                       tuples
+                       where
+                         asent = markedSentence sent
+                         tuples = spoonerizableWordSeqs asent
+
+-- Returns a random spoonerization for the given String.
 spoonerize :: String -> IO String
-spoonerize str =
-    let markedWords = markedSentence str in
-      do
-        shuffled <- shuffle $ spoonerizableWords $ markedSentence str
-        let [toSpoonerizeA, toSpoonerizeB] = take 2 shuffled in
-          return $ substituteWords(markedWords, toSpoonerizeA, toSpoonerizeB)
+spoonerize sent = do
+  randomSpoonerizationNum <- randomRIO(0, length possibilities)
+  return $ possibilities !! randomSpoonerizationNum
+    where possibilities = spoonerizations sent
