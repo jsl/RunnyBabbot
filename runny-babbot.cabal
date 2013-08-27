@@ -13,7 +13,7 @@ source-repository head
   type:                git
   location:            git://github.com/jsl/runny-babbot.git
 
-test-suite test-foo
+test-suite test-runny-babbot
     type:       exitcode-stdio-1.0
     main-is:    TestSuite.hs
     other-modules:
