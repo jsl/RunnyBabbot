@@ -143,8 +143,14 @@ spoonerizations sent = map
                          tuples = spoonerizableWordSeqs asent
 
 -- Returns a random spoonerization for the given String.
-spoonerize :: String -> IO String
-spoonerize sent = do
-  randomSpoonerizationNum <- randomRIO(0, length possibilities)
-  return $ possibilities !! randomSpoonerizationNum
-    where possibilities = spoonerizations sent
+spoonerize :: String -> IO (Maybe String)
+spoonerize sent =
+  let possibilities = spoonerizations sent in
+
+  if not (null possibilities)
+  then
+      do
+        chosen <- randomRIO(0, (length possibilities) - 1)
+        return $ Just $ possibilities !! chosen
+  else
+      return Nothing

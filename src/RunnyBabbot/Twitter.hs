@@ -3,7 +3,6 @@
 module RunnyBabbot.Twitter
     ( mentions
     , postTweetResponse
-    , tweetResponseFor
     , replaceRunnyBabbotMention
     , processNewTweets
     ) where
@@ -52,33 +51,47 @@ mentions creds = do
 
 processTweetResponse :: IConnection conn => conn -> OauthCredentials -> Tweet
                      -> IO ()
-processTweetResponse conn creds newTweet = do
-  tweetResponse <- tweetResponseFor newTweet
-  putStrLn $ "Responding to Tweet: " ++ show newTweet ++
-           " with response: " ++ show tweetResponse
+processTweetResponse conn creds
+                     Tweet { text = txt
+                           , RunnyBabbot.TwitterData.id = originalTweetId
+                           , user = User { screen_name = userName } } = do
 
-  -- Register Tweet in the database first so that we don't spam this person
-  -- if the Tweet posting fails. For example, the Tweet post could be too
-  -- long. We don't want to continue trying in that case.
-  registerTweet conn newTweet
-  postTweetResponse creds tweetResponse
+                       -- Register before spoonerizing, since we don't want
+                       -- to reprocess old Tweets
+                       putStrLn $ "Registering and processing tweet id " ++
+                                show originalTweetId ++
+                                " from " ++ unpack userName ++
+                                " text: " ++ unpack txt
+
+                       registerTweet conn originalTweetId
+
+                       spoonerizedText <- spoonerize $ unpack txt
+                       case spoonerizedText of
+                         Just value -> do
+                           let textWithUserMention =
+                                   replaceRunnyBabbotMention value
+                                       (unpack userName)
+
+                           let tweetResponse = TweetResponse
+                                               { status = textWithUserMention
+                                               , in_reply_to_status_id =
+                                                   originalTweetId }
+
+                           putStrLn $ "Responding to Tweet: " ++
+                                    unpack txt ++ " with response: " ++
+                                    show tweetResponse
+
+                           postTweetResponse creds tweetResponse
+
+                         Nothing -> putStrLn $ "Unspoonerizable tweet id " ++
+                                    show originalTweetId ++
+                                   ", only registering."
+
 
 
 processNewTweets :: IConnection conn => conn -> OauthCredentials -> [Tweet] ->
                     IO ()
 processNewTweets conn creds = mapM_ (processTweetResponse conn creds)
-
-tweetResponseFor :: Tweet -> IO TweetResponse
-tweetResponseFor Tweet { text = txt
-                       , RunnyBabbot.TwitterData.id = originalTweetId
-                       , user = User { screen_name = userName } } = do
-
-  spoonerizedText <- spoonerize $ unpack txt
-  let textWithUserMention = replaceRunnyBabbotMention spoonerizedText
-                            (unpack userName)
-
-  return TweetResponse { status = textWithUserMention
-                       , in_reply_to_status_id = originalTweetId }
 
 replaceRunnyBabbotMention :: String -> String -> String
 replaceRunnyBabbotMention originalTweet newUsername =
